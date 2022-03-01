@@ -12,6 +12,13 @@ def index(request):
 
     proxies_list = get_proxies()
     for proxy in proxies_list:
+
+        try:
+            Proxy.objects.get(ip=proxy["ip"])
+            continue
+        except Proxy.DoesNotExist:
+            pass
+
         Proxy.objects.create(
             ip=proxy["ip"],
             port=proxy["port"],

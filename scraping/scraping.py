@@ -27,15 +27,10 @@ def get_proxies():
     """
     source = "https://www.freeproxylists.net/"
     head = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:98.0) Gecko/20100101 Firefox/98.0",
-        "Upgrade-Insecure-Requests": "1",
-        "TE": "Trailers",
-        "Sec-Fetch-Site": "same-origin",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
+        "Sec-Fetch-Site": "none",
         "Sec-Fetch-Mode": "navigate",
-        "Origin": "https://www.freeproxylists.net",
-        "Host": "www.freeproxylists.net",
-        "Cookie": "hl=en",
-        "Referer": "https://www.freeproxylists.net/",
+        "Cookie": "hl=en; userno=20220227-002452; from=direct; visited=2022/03/02 02:42:39; pv=26",
         "content-type": "application/x-www-form-urlencoded",
         "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
         "accept-encoding": "gzip, deflate, br",
@@ -61,15 +56,16 @@ def get_proxies():
     number_of_pages = len(number_of_pages)
 
     table = soup.find("table", {"class": "DataGrid"})
-    all_tr = table.find_all("tr", {"class": ["Odd", "Even"]})
+    all_tr = table.find_all("tr")
 
     i = 1
     j = 1
 
-    while j <= number_of_pages:
+    while j <= number_of_pages - 1:
         time.sleep(2)
         r = s.get(source + "?page=" + str(j))
         soup = BeautifulSoup(r.text, "html.parser")
+        table = soup.find("table", {"class": "DataGrid"})
         j += 1
 
         for i in range(len(all_tr)):
@@ -88,11 +84,13 @@ def get_proxies():
                 "transfer": "",
             }
             row = table.findAll("tr")[i :: i + 1]
+            print(j)
             all_td = row[0].find_all("td")
-            if len(all_td) < 10:
+            if len(all_td) < 10 or all_td[0].text == "IP Address":
                 i += 1
                 continue
             else:
+
                 for td in all_td:
                     script_tag = td.find("script")
                     bar = td.find("span", {"class": "bar"})
@@ -111,7 +109,7 @@ def get_proxies():
                         proxie_list.append(td.text)
 
                 proxie["ip"] = proxie_list[0]
-                proxie["port"] = proxie_list[1]
+                proxie["port"] = int(proxie_list[1])
                 proxie["protocol"] = proxie_list[2]
                 proxie["anonymity"] = proxie_list[3]
                 proxie["country"] = proxie_list[4]
@@ -121,8 +119,6 @@ def get_proxies():
                 proxie["response"] = proxie_list[8]
                 proxie["transfer"] = proxie_list[9]
 
-                # print("\n")
-                # print(proxie)
                 proxies.append(proxie)
 
             i += 1

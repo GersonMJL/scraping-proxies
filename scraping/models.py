@@ -3,7 +3,7 @@ from django.db import models
 
 # Create your models here.
 class Proxy(models.Model):
-    ip = models.CharField(max_length=45)
+    ip = models.CharField(max_length=45, unique=True)
     port = models.IntegerField()
     protocol = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
