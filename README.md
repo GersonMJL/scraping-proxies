@@ -35,4 +35,4 @@ python manange.py makemigrations
 python manange.py migrate
 ```
 
-E por fim acesse localhost:8000/scraping
+E por fim acesse localhost:8080/scraping
